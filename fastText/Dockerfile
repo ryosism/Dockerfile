@@ -1,4 +1,4 @@
-ARG cuda_version=10.1
+ARG cuda_version=10.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
 # 10.1-cudnn7-runtime-ubuntu16.04
@@ -38,13 +38,14 @@ RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
 
 # USER $NB_USER
 
-ARG python_version=3.6
+ARG python_version=3.4
 
 RUN conda install -y python=${python_version} && \
     pip install --upgrade pip && \
     pip install \
       sklearn_pandas \
-      tensorflow-gpu==1.12.0 && \
+      tensorflow-gpu && \
+      pip install https://cntk.ai/PythonWheel/GPU/cntk-2.1-cp36-cp36m-linux_x86_64.whl && \i
     conda install \
       bcolz \
       h5py \
@@ -58,7 +59,7 @@ RUN conda install -y python=${python_version} && \
       pyyaml \
       scikit-learn \
       six && \
-      git clone git://github.com/keras-team/keras.git -b 2.0.3 ./src && pip install -e /src[tests] && \
+      git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
       pip install git+git://github.com/keras-team/keras.git && \
     conda clean -yt
 
