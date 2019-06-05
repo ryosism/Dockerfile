@@ -70,4 +70,4 @@ EXPOSE 8888
 RUN conda install -y -c conda-forge opencv
 RUN jupyter notebook --generate-config
 RUN sed -i '205i c.NotebookApp.ip = "0.0.0.0"' /root/.jupyter/jupyter_notebook_config.py
-RUN echo "alias l='ls -al'" >> ~/.bashrc
+RUN echo "alias l='ls -al'" >> ~/.bashrc && \ echo "PS1='\n\[\e[0;37m\][\w]\[\e[0m\]\n\[\e[0;32m\]\!\[\e[0m\]:\$ '" >> ~/.bashrc
