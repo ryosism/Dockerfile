@@ -1,5 +1,5 @@
 # -----------------------------
-# ryosism_deep
+# keras_frcnn_cuda10
 # -----------------------------
 
 ARG cuda_version=10.0
@@ -48,7 +48,7 @@ RUN conda install -y python=${python_version} && \
     pip install --upgrade pip && \
     pip install \
       sklearn_pandas \
-      tensorflow-gpu==1.13.1 && \
+      tensorflow-gpu==1.12.0 && \
     conda install \
       bcolz \
       h5py \
@@ -62,7 +62,7 @@ RUN conda install -y python=${python_version} && \
       pyyaml \
       scikit-learn \
       six && \
-      git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
+      git clone git://github.com/keras-team/keras.git -b 2.0.3 ./src && pip install -e /src[tests] && \
       pip install git+git://github.com/keras-team/keras.git && \
     conda clean -yt
 
