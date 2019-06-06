@@ -5,7 +5,7 @@
 ARG cuda_version=9.0
 ARG cudnn_version=7
 FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
-# 10.1-cudnn7-runtime-ubuntu16.04
+# 9.0-cudnn7-runtime-ubuntu16.04
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -63,7 +63,6 @@ RUN conda install -y python=${python_version} && \
       scikit-learn \
       six && \
       git clone git://github.com/keras-team/keras.git -b 2.0.3 ./src && pip install -e /src[tests] && \
-      pip install git+git://github.com/keras-team/keras.git && \
     conda clean -yt
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
