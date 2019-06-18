@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       git \
       graphviz \
       language-pack-ja \
+      locales \
       libgl1-mesa-glx \
       libhdf5-dev \
       openmpi-bin \
@@ -77,3 +78,4 @@ RUN sed -i '205i c.NotebookApp.ip = "0.0.0.0"' /root/.jupyter/jupyter_notebook_c
 
 ADD ./bashAlias.txt /
 RUN cat /bashAlias.txt >> ~/.bashrc
+RUN localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
