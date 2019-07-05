@@ -72,7 +72,8 @@ ENV PYTHONPATH='/src/:$PYTHONPATH'
 
 EXPOSE 8888
 
-RUN conda install -y -c conda-forge opencv
+# RUN conda install -y -c conda-forge opencv
+RUN pip install opencv-python
 RUN jupyter notebook --generate-config
 RUN sed -i '205i c.NotebookApp.ip = "0.0.0.0"' /root/.jupyter/jupyter_notebook_config.py
 
