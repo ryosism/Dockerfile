@@ -1,21 +1,16 @@
-# -----------------------------
-# ryosism_deep
-# -----------------------------
+ARG cuda_version=8.0
+ARG cudnn_version=5.0
+#FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
+FROM nvidia/cuda:8.0-cudnn5-devel-ubuntu14.04
+# CUDA = 8.0, cudnn = 5.1
 
-ARG cuda_version=10.0
-ARG cudnn_version=7
-FROM nvidia/cuda:${cuda_version}-cudnn${cudnn_version}-devel
-# 10.1-cudnn7-runtime-ubuntu16.04
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
       bzip2 \
-      curl \
       g++ \
       git \
       graphviz \
-      language-pack-ja \
-      locales \
       libgl1-mesa-glx \
       libhdf5-dev \
       openmpi-bin \
@@ -23,10 +18,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       less \
       wget && \
     rm -rf /var/lib/apt/lists/*
-
-# Configure imgcat
-RUN curl https://www.iterm2.com/utilities/imgcat -o /usr/local/bin/imgcat && \
-    chmod +x /usr/local/bin/imgcat
 
 # Install conda
 ENV CONDA_DIR /opt/conda
@@ -38,9 +29,9 @@ RUN wget --quiet --no-check-certificate https://repo.continuum.io/miniconda/Mini
     rm Miniconda3-4.2.12-Linux-x86_64.sh && \
     echo export PATH=$CONDA_DIR/bin:'$PATH' > /etc/profile.d/conda.sh
 
-# Install Python packages and keras
-ENV NB_USER ryosism
-ENV NB_UID 1004
+# Install Python packages and user
+ENV NB_USER user
+ENV NB_UID 1000
 
 RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
     chown $NB_USER $CONDA_DIR -R && \
@@ -49,16 +40,14 @@ RUN useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
 
 # USER $NB_USER
 
-ARG python_version=3.6
+ARG python_version=2.7
 
 RUN conda install -y python=${python_version} && \
     pip install --upgrade pip && \
     pip install \
-      sklearn_pandas \
-      torch \
-      torchvision \
-      cnn_finetune \
-      tensorflow-gpu==1.13.1 && \
+      sklearn_pandas && \
+    # pip install https://cntk.ai/PythonWheel/GPU/cntk-2.1-cp36-cp36m-linux_x86_64.whl && \
+    # pip install https://cntk.ai/PythonWheel/GPU/cntk_gpu-2.6-cp27-cp27mu-linux_x86_64.whl && \
     conda install \
       bcolz \
       h5py \
@@ -71,20 +60,12 @@ RUN conda install -y python=${python_version} && \
       pygpu \
       pyyaml \
       scikit-learn \
+      chainer==1.24 \
       six && \
-      git clone git://github.com/keras-team/keras.git /src && pip install -e /src[tests] && \
-      pip install git+git://github.com/keras-team/keras.git && \
     conda clean -yt
 
 ENV PYTHONPATH='/src/:$PYTHONPATH'
 
 EXPOSE 8888
 
-# RUN conda install -y -c conda-forge opencv
-RUN pip install opencv-python
-RUN jupyter notebook --generate-config
-RUN sed -i '205i c.NotebookApp.ip = "0.0.0.0"' /root/.jupyter/jupyter_notebook_config.py
-
-ADD ./bashAlias.txt /
-RUN cat /bashAlias.txt >> ~/.bashrc
-RUN localedef -f UTF-8 -i ja_JP ja_JP.UTF-8
+RUN conda install opencv
